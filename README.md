@@ -62,3 +62,7 @@ python geek_crawler-only-with_vedioandpicture.py --course "专栏名称" --passw
 本项目面向个人学习与已授权内容的离线阅读。请使用自己的有效账号，并遵守极客时间的服务条款、版权及适用法律。请勿将下载的付费课程内容或媒体文件上传、传播或用于商业用途。
 
 本项目与极客时间无关联。
+
+## 来源
+
+本项目基于 [zhengxiaotian/geek_crawler](https://github.com/zhengxiaotian/geek_crawler) 继续开发。本 fork 聚焦离线 HTML 阅读体验，并补充了文章大纲跳转、本地图片与点击放大、独立目录页及凭据环境变量读取。
