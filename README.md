@@ -1,71 +1,64 @@
-# geek_crawler
+# GeekTime 离线 HTML 阅读器
 
-最近极客时间有个活动，企业可以为每位员工免费领取3门课程。刚好我们公司领导也给我们申请了这个权益（没有领取的可以找领导说说帮忙弄一下，[活动地址](https://account.geekbang.org/biz/signin?redirect=https%3A%2F%2Fservice.geekbang.org%2Fdashboard%2Fhome%2F%3Futm_source%3Dfrontshow%26utm_medium%3Dwechat%26utm_campaign%3D316%26utm_term%3Dfrontend%26gk_source%3Dfrontshowwechat&gk_source=frontshowwechat&utm_source=frontshow&utm_medium=wechat&utm_campaign=316&utm_term=frontend)）。
+把已获得阅读权限的极客时间专栏整理为可离线浏览的 HTML。项目重点是尽可能贴近原网页的阅读体验：保留正文层级与文章目录跳转，按原文尺寸呈现图片，并支持点击图片单独放大查看。
 
-免费领取的课程只有30天有效期，因为工作日白天要正常上班，30天之内没法学完3门课程。所以就写了个脚本，将账号下所有可以看到的专栏课程自动保存到本地。
+![专栏目录演示](docs/screenshots/course-index.png)
 
-### :boom: 该项目仅限学习交流使用，请勿用于任何商业行为和损害其它人利益的行为。 :boom:
+![文章阅读与图片放大演示](docs/screenshots/reader-layout.png)
 
-### 如何使用
+![点击图片后的独立放大效果](docs/screenshots/image-zoom.png)
 
-1. 将代码 clone 到本地
+## 阅读版特点
 
-   ```shell
-   git clone git@github.com:zhengxiaotian/geek_crawler.git
-   ```
+- 每个专栏输出到独立的 `专栏名称_HTML阅读版/` 文件夹，包含目录页 `index.html` 和每篇文章的独立 HTML。
+- 按正文标题自动生成浮动大纲，点击标题可跳转到文章对应位置。
+- 将文章图片保存到本地 `assets/`，按正文宽度显示，点击后可在遮罩层中查看大图。
+- 保留标题、段落、列表、代码块等 HTML 内容结构，方便长文阅读。
+- 阅读版不写入音频和视频。
 
-2. 直接在终端或者 Pycharm 中运行脚本(ps: 代码是在 Python3 下编写的，需要使用 Python3 运行)
+## 使用
 
-   ```shell
-   # 运行前需安装一个第三方库 requests
-   python geek_crawler.py
-   ```
+需要 Python 3 和 `requests`：
 
-3. 输入账号密码
+```powershell
+python -m pip install requests
+```
 
-   ```shell
-   E:\geek_crawler (master -> origin)
-   λ python geek_crawler.py
-   请输入你的极客时间账号（手机号）: *************
-   请输入你的极客时间密码: ************
-   ```
+下载一个或多个专栏：
 
-4. 抓取完成
+```powershell
+python geek_crawler-only-with_vedioandpicture.py --course "专栏名称"
+python geek_crawler-only-with_vedioandpicture.py --course "专栏一" --course "专栏二"
+```
 
-   ```shell
-   2020-04-28 19:32:41,624 - geek_crawler.py[line:307] - INFO: 请求获取文章信息接口：
-   2020-04-28 19:32:41,633 - geek_crawler.py[line:320] - INFO: 接口请求参数：{'id': 225554, 'include_neighbors': 'tru
-   e', 'is_freelyread': 'true'}
-   2020-04-28 19:32:42,047 - geek_crawler.py[line:349] - INFO: ----------------------------------------
-   2020-04-28 19:32:47,131 - geek_crawler.py[line:478] - INFO: 正常抓取完成。
-   ```
+默认只下载「AI Agent 系统设计面试现场」。也可选择账号下所有可见专栏：
 
-   ![Snipaste_2020-04-29_08-55-08.png](http://ww1.sinaimg.cn/large/655c061fgy1geacsajgz4j20pk04lmxq.jpg)
+```powershell
+python geek_crawler-only-with_vedioandpicture.py --all-courses
+```
 
-   *PS：如果抓取过程中有接口报错导致抓取中断，可以查看日志中对应的报错信息，然后直接重新跑脚本继续抓取（之前抓取成功的文章会在本地有文档记录，后续不会重复抓取的）*
+登录方式：优先从环境变量读取 `GEEKTIME_COOKIE`；也可通过 `--password-login` 使用环境变量 `GEEKTIME_CELLPHONE` / `GEEKTIME_PASSWORD`，未设置时会在终端交互输入。凭据不会保存在源码中。
 
-   
+```powershell
+python geek_crawler-only-with_vedioandpicture.py --course "专栏名称" --password-login
+```
 
-### 成果展示
+可选参数：
 
-![Snipaste_2020-04-29_08-44-44.png](http://ww1.sinaimg.cn/large/655c061fgy1geacmd7a5fj20nq035mxa.jpg)
+```text
+--no-images       跳过图片下载
+--with-comments   保存文章评论
+--force           忽略本地完成记录，重新下载所选专栏
+```
 
-![Snipaste_2020-04-28_19-31-52.png](http://ww1.sinaimg.cn/large/655c061fgy1ge9plld31oj20nd0h6gqf.jpg)
+下载完成后打开 `专栏名称_HTML阅读版/index.html` 即可开始阅读。目录文件和文章 HTML 都保存在本机，便于个人学习与备份。
 
+## 截图说明
 
+仓库中的截图使用虚构的示例标题和示意图，只展示目录、正文排版、锚点跳转和图片放大交互。公开仓库不包含任何专栏正文、原始配图、PDF、音频或视频。
 
-### 功能清单
+## 使用边界
 
-- [x] 输入账号密码后自动将该账号下所有可以看到的专栏（图文+音频），保存到本地；
+本项目面向个人学习与已授权内容的离线阅读。请使用自己的有效账号，并遵守极客时间的服务条款、版权及适用法律。请勿将下载的付费课程内容或媒体文件上传、传播或用于商业用途。
 
-- [x] 可以支持选择保存成 Markdown 文档或者 HTML 文档；
-
-- [x] 支持配置排除某些课程的拉取（比如已经有的课程不再下载）；
-
-- [ ] 抓取指定名称的课程；
-
-- [ ] 将每篇文章的评论与正文一起保存到本地；
-
-- [ ] 将视频拉取下来保存成 MP4 文件；
-
-  
+本项目与极客时间无关联。
